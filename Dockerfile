@@ -21,4 +21,8 @@ EXPOSE $PORT
 # add this just before CMD
 ENV PYTHONPATH="${PYTHONPATH}:/app/code"
 
+# after your existing COPY lines
+COPY docker-entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["docker-entrypoint.sh"]
+
 CMD ["python", "code/webserver/WebServer.py"]
