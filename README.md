@@ -1,5 +1,18 @@
-# What is NLWeb
+# What is NLWeb for WP?
 
+An LLM-powered web indexer + search UI for your WP site.
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template/gJ49EI?referralCode=K2bTMV)
+
+## Getting Started
+1. Click the button above.
+2. Authenticate with GitHub + Railway.
+3. Fill in required env vars (OPENAI_API_KEY, etc.)
+4. Deploy!
+
+🚀 Done!
+
+Original README from NLWeb from Microsoft: 
 
 Building conversational interfaces for websites is hard. NLWeb seeks to
 make it easy for websites to do this. And since NLWeb natively speaks MCP,
