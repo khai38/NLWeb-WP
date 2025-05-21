@@ -7,8 +7,9 @@ An LLM-powered web indexer + search UI for your WP site.
 ## Getting Started
 1. Click the button above.
 2. Authenticate with GitHub + Railway.
-3. Fill in required env vars (OPENAI_API_KEY, etc.)
-4. Deploy!
+3. Fill in required env vars (OPENAI_API_KEY, SEED_FEED_URL, SEED_SITE, etc.)
+4. View the associated WordPress plugin repo and install it to your WordPress site [here:](https://github.com/KodyKendall/nlweb-wp/blob/main/nlweb-chatbot.php)
+5. Deploy!
 
 🚀 Done!
 
