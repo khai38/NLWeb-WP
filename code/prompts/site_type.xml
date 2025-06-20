@@ -131,99 +131,125 @@
 
     <Prompt ref="RankingPromptWithExplanation">
       <promptString>
-        Assign a score between 0 and 100 to the following {site.itemType}
-        based on how relevant it is to the user's question. Use your knowledge from other sources, about the item, to make a judgement.
-        Provide a short description of the item that is relevant to the user's question, without mentioning the user's question.
-        Provide an explanation of the relevance of the item to the user's question, without mentioning the user's question or the score or explicitly mentioning the term relevance.
-        If the score is below 75, in the description, include the reason why it is still relevant.
-        The user's question is: {request.query}. The item's description is {item.description}
+        Đánh giá mức độ phù hợp của {site.itemType} sau đây với câu hỏi của người dùng trên thang điểm từ 0 đến 100.
+        Sử dụng kiến thức về lĩnh vực công nghệ thông tin và giáo dục tin học tại Việt Nam để đưa ra đánh giá.
+        Mô tả ngắn gọn về mục này bằng tiếng Việt tự nhiên, tập trung vào tính ứng dụng thực tế trong công việc và học tập.
+        Giải thích sự phù hợp một cách dễ hiểu, phù hợp với người học tin học ở Việt Nam.
+        Ưu tiên các thuật ngữ tiếng Việt phổ biến trong ngành IT và giáo dục.
+        Nếu điểm số dưới 75, hãy giải thích tại sao mục này vẫn có giá trị học tập.
+        Câu hỏi của người dùng: {request.query}. Mô tả mục: {item.description}
       </promptString>
       <returnStruc>
         {
-          "score": "integer between 0 and 100",
-          "description": "short description of the item",
-          "explanation": "explanation of the relevance of the item to the user's question"
+          "score": "số nguyên từ 0 đến 100",
+          "description": "mô tả ngắn gọn bằng tiếng Việt, tập trung vào ứng dụng thực tế",
+          "explanation": "giải thích phù hợp với bối cảnh học tin học tại Việt Nam"
         }
       </returnStruc>
     </Prompt>
 
     <Prompt ref="RankingPrompt">
       <promptString>
-        Assign a score between 0 and 100 to the following item
-        based on how relevant it is to the user's question. Use your knowledge from other sources, about the item, to make a judgement. 
-        If the score is above 50, provide a short description of the item highlighting the relevance to the user's question, without mentioning the user's question.
-        Provide an explanation of the relevance of the item to the user's question, without mentioning the user's question or the score or explicitly mentioning the term relevance.
-        If the score is below 75, in the description, include the reason why it is still relevant.
-        The user's question is: \"{request.query}\". The item's description in schema.org format is \"{item.description}\".
+        Đánh giá mức độ liên quan của mục sau đây với câu hỏi của người dùng trên thang điểm từ 0 đến 100.
+        Xem xét từ góc độ của học viên tin học tại Việt Nam, đặc biệt là những người đang học tại các trung tâm tin học.
+        Nếu điểm số trên 50, hãy mô tả ngắn gọn bằng tiếng Việt về tính ứng dụng của mục này trong:
+        - Công việc văn phòng và doanh nghiệp
+        - Kỹ năng tin học cần thiết
+        - Các chứng chỉ và khóa học phổ biến
+        - Xu hướng công nghệ mới
+        Sử dụng ngôn ngữ phù hợp với người Việt Nam, tránh thuật ngữ khó hiểu.
+        Câu hỏi của người dùng: "{request.query}". Mô tả mục theo định dạng schema.org: "{item.description}".
       </promptString>
       <returnStruc>
         {
-          "score": "integer between 0 and 100",
-          "description": "short description of the item"
+          "score": "số nguyên từ 0 đến 100",
+          "description": "mô tả ngắn gọn bằng tiếng Việt, tập trung vào ứng dụng trong tin học"
         }
       </returnStruc>
     </Prompt>
 
     <Prompt ref="RankingPromptForGenerate">
       <promptString>
-        Assign a score between 0 and 100 to the following item
-        based on useful it might be to answering the user's question. 
-        The user's question is: \"{request.query}\".
-        The item in schema.org format is: \"{item.description}\". Include a 
-        short description of the item in the description field.
+        Đánh giá mức độ hữu ích của mục sau đây trong việc trả lời câu hỏi của người dùng, trên thang điểm từ 0 đến 100.
+        Xem xét từ góc độ giáo dục tin học tại Việt Nam và nhu cầu thực tế của học viên.
+        Câu hỏi của người dùng: "{request.query}".
+        Mục theo định dạng schema.org: "{item.description}".
+        Trong phần mô tả, hãy nêu rõ:
+        - Kỹ năng tin học nào sẽ được học
+        - Ứng dụng thực tế trong công việc
+        - Mức độ phù hợp với người mới bắt đầu hoặc nâng cao
+        - Liên quan đến các phần mềm/công nghệ phổ biến tại Việt Nam
       </promptString>
       <returnStruc>
         {
-          "score" : "integer between 0 and 100",
-          "description" : "short description of the item"
+          "score" : "số nguyên từ 0 đến 100",
+          "description" : "mô tả ngắn gọn bằng tiếng Việt về kỹ năng tin học và ứng dụng"
         }
       </returnStruc>
     </Prompt>
      
-    
     <Prompt ref="SynthesizePromptForGenerate">
       <promptString>
-        Given the following items, synthesize an answer to the user's question. 
-        You do not need to include all the items, but you should include the most relevant ones.
-        For each of the items included in the answer, provide the URL of the item in 
-        the 'urls' field of the structured output. Make sure to include 
-        the URL for every one of the items. Do not include the URL in the answer field.
-        The user's question is: {request.query}.
-        The items are: {request.answers}.
+        Dựa trên các mục sau đây, hãy tổng hợp thành một câu trả lời hoàn chỉnh bằng tiếng Việt cho câu hỏi của người dùng.
+        Tập trung vào các khóa học, kỹ năng tin học và kiến thức thực tế.
+        Sử dụng ngôn ngữ phù hợp với môi trường giáo dục tin học tại Việt Nam.
+        Ưu tiên các thông tin về:
+        - Khóa học cụ thể và nội dung đào tạo
+        - Kỹ năng tin học cần thiết cho công việc
+        - Phần mềm và công nghệ được sử dụng phổ biến
+        - Lộ trình học tập và phát triển kỹ năng
+        Đối với mỗi mục được đưa vào câu trả lời, hãy cung cấp URL trong trường 'urls'.
+        Đảm bảo bao gồm URL cho mọi mục được đề cập, không đưa URL vào phần câu trả lời.
+        Câu hỏi của người dùng: {request.query}.
+        Các mục: {request.answers}.
       </promptString>
       <returnStruc>
         {
-          "answer" : "string",
-          "urls" : "urls of the items included in the answer"
+          "answer" : "câu trả lời hoàn chỉnh bằng tiếng Việt về tin học và giáo dục",
+          "urls" : "các URL của các mục được đưa vào câu trả lời"
         }
       </returnStruc>
     </Prompt>
 
-     <Prompt ref="SummarizeResultsPrompt">
+    <Prompt ref="SummarizeResultsPrompt">
       <promptString>
-        Given the following items, summarize the results as an answer to the user's question. `
-        The user's question is: {request.query}. 
-        The items are: {request.answers}.
+        Dựa trên các kết quả tìm kiếm sau đây, hãy tóm tắt bằng tiếng Việt để trả lời câu hỏi của người dùng.
+        Tập trung vào các thông tin liên quan đến học tin học, kỹ năng số và ứng dụng công nghệ.
+        Sử dụng ngôn ngữ thân thiện, dễ hiểu phù hợp với học viên tin học tại Việt Nam.
+        Ưu tiên đề cập đến:
+        - Các khóa học và chương trình đào tạo cụ thể
+        - Kỹ năng tin học và mức độ từ cơ bản đến nâng cao
+        - Ứng dụng thực tế trong công việc văn phòng, thiết kế, lập trình
+        - Các chứng chỉ quốc tế như MOS, Adobe, Autodesk
+        - Xu hướng và công nghệ mới trong ngành IT
+        Tránh sử dụng thuật ngữ kỹ thuật phức tạp, giải thích một cách đơn giản và thực tế.
+        Câu hỏi của người dùng: {request.query}. 
+        Các kết quả: {request.answers}.
       </promptString>
       <returnStruc>
         {
-          "summary" : "string"
+          "summary" : "tóm tắt bằng tiếng Việt về tin học và giáo dục, phù hợp với bối cảnh Việt Nam"
         }
       </returnStruc>
     </Prompt>
 
     <Prompt ref="DescriptionPromptForGenerate">
       <promptString>
-        The item with the following description is used to answer the user's question. 
-        Please provide a description of the item, in the context of the user's question
-        and the overall answer.
-        The user's question is: {request.query}.
-        The overall answer is: {request.answer}.
-        The item is: {item.description}.
+        Mục với mô tả sau đây được sử dụng để trả lời câu hỏi của người dùng về tin học.
+        Hãy cung cấp mô tả bằng tiếng Việt, phù hợp với bối cảnh giáo dục tin học tại Việt Nam.
+        Tập trung vào khía cạnh giáo dục và ứng dụng thực tế trong:
+        - Học tập và đào tạo tin học
+        - Ứng dụng trong công việc và doanh nghiệp
+        - Phát triển kỹ năng số và công nghệ
+        - Chuẩn bị cho các chứng chỉ quốc tế
+        Sử dụng ngôn ngữ đơn giản, dễ hiểu cho người học tin học.
+        Câu hỏi của người dùng: {request.query}.
+        Câu trả lời tổng thể: {request.answer}.
+        Mục cần mô tả: {item.description}.
       </promptString>
       <returnStruc>
         {
-          "description" : "string"
+          "description" : "mô tả bằng tiếng Việt về khóa học/kỹ năng tin học và ứng dụng thực tế"
         }
       </returnStruc>
     </Prompt>
@@ -231,42 +257,48 @@
 
   </Thing>
 
-  <Recipe>
-    <Prompt ref="DetectMemoryRequestPrompt">
+  <!-- Thêm section đặc biệt cho giáo dục tin học -->
+  <ComputerEducation>
+    <Prompt ref="CourseRecommendationPrompt">
       <promptString>
-        Analyze the following statement from the user. 
-        Is the user asking you to remember a dietary constraint, that may be relevant
-        to not just this query, but also future queries? For example, the user may say
-        that they are vegetarian or observe kosher or halal or specify an allergy.
-        If so, what is the user asking us to remember?
-        The user should be explicitly asking you to remember something for future queries, 
-        not just expressing a requirement for the current query.
-        The user's query is: {request.rawQuery}.
+        Dựa trên câu hỏi của người dùng về học tin học, hãy đưa ra khuyến nghị phù hợp.
+        Xem xét các yếu tố:
+        - Trình độ hiện tại (mới bắt đầu, trung cấp, nâng cao)
+        - Mục tiêu nghề nghiệp (văn phòng, thiết kế, lập trình, kế toán)
+        - Thời gian và ngân sách học tập
+        - Các chứng chỉ quốc tế phổ biến tại Việt Nam
+        Câu hỏi của người dùng: {request.query}
       </promptString>
       <returnStruc>
         {
-          "is_memory_request": "True or False",
-          "memory_request": "The memory request, if any"
+          "recommendation" : "khuyến nghị khóa học bằng tiếng Việt",
+          "skill_level" : "trình độ phù hợp",
+          "career_relevance" : "liên quan đến nghề nghiệp"
         }
       </returnStruc>
     </Prompt>
-  </Recipe>
 
-  <RealEstate>
-    <Prompt ref="RequiredInfoPrompt">
+    <Prompt ref="SoftwareSkillPrompt">
       <promptString>
-        Answering the user's query requires the location and price range.
-        Do you have this information from this
-        query or the previous queries or the context or memory about the user? 
-        The user's query is: {request.query}. The previous queries are: {request.previousQueries}.
+        Phân tích kỹ năng phần mềm được đề cập trong câu hỏi và đưa ra thông tin hữu ích.
+        Tập trung vào các phần mềm phổ biến tại Việt Nam như:
+        - Microsoft Office (Word, Excel, PowerPoint, Access)
+        - Adobe Creative Suite (Photoshop, Illustrator, InDesign, Premiere)
+        - Autodesk (AutoCAD, 3ds Max, Revit)
+        - Phần mềm kế toán (MISA, FAST, Bravo)
+        - Ngôn ngữ lập trình phổ biến
+        Câu hỏi của người dùng: {request.query}
       </promptString>
       <returnStruc>
         {
-          "required_info_found": "True or False",
-          "user_question": "Question to ask the user for the required information"
+          "software_info" : "thông tin về phần mềm bằng tiếng Việt",
+          "learning_path" : "lộ trình học tập đề xuất",
+          "practical_application" : "ứng dụng thực tế trong công việc"
         }
       </returnStruc>
     </Prompt>
-  </RealEstate>
+  </ComputerEducation>
+
+  <!-- ...existing code... -->
 
 </root>
