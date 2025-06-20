@@ -7,7 +7,7 @@
 (function() {
     'use strict';    // Configuration - Can be overridden by setting window.NLWEB_CONFIG
     const DEFAULT_CONFIG = {
-        apiBaseUrl: 'https://web-production-89f0d.up.railway.app',
+        apiBaseUrl: 'https://nlweb-wp-production.up.railway.app',
         widgetId: 'nlweb-chat-widget',
         title: 'NLWeb Assistant',
         welcomeMessage: '👋 Hello! How can I help you today?'
