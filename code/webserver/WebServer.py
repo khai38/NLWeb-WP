@@ -10,6 +10,7 @@ Backwards compatibility is not guaranteed at this time.
 
 import asyncio
 import json
+import logging
 import os
 import sys
 import time
@@ -319,24 +320,25 @@ async def fulfill_request(method, path, headers, query_params, body, send_respon
     try:
         streaming = True
         generate_mode = "none"
+        
         if ("streaming" in query_params):
             strval = get_param(query_params, "streaming", str, "True")
             streaming = strval not in ["False", "false", "0"]
-
+        
         if ("generate_mode" in query_params):
             generate_mode = get_param(query_params, "generate_mode", str, "none")
-           
+        
         if path == "/" or path == "":
             # Serve the home page as /static/index.html
             # First check if the file exists
             try:
                 await send_static_file("/static/index.html", send_response, send_chunk)
             except FileNotFoundError:
-                # If new_test.html doesn't exist, send a 404 error
+                # If index.html doesn't exist, send a 404 error
                 await send_response(404, {'Content-Type': 'text/plain'})
                 await send_chunk("Home page not found".encode('utf-8'), end_response=True)
             return
-        elif (path.find("html/") != -1) or path.find("static/") != -1 or (path.find("png") != -1):
+        elif (path.find("html/") != -1) or path.find("static/") != -1 or (path.find("png") != -1) or path.endswith('.js') or path.endswith('.css') or path.endswith('.ico'):
             await send_static_file(path, send_response, send_chunk)
             return
         elif (path.find("who") != -1):
