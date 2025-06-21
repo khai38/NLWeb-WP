@@ -10,7 +10,6 @@ Backwards compatibility is not guaranteed at this time.
 
 import asyncio
 import json
-import logging
 import os
 import sys
 import time
@@ -106,11 +105,11 @@ async def handle_client(reader, writer, fulfill_request):
                 status_line = f"HTTP/1.1 {status_code}\r\n"
                 writer.write(status_line.encode('utf-8'))
                 
-                # Add CORS headers if enabled
-                if CONFIG.server.enable_cors and 'Origin' in headers:
-                    response_headers['Access-Control-Allow-Origin'] = '*'
-                    response_headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
-                    response_headers['Access-Control-Allow-Headers'] = 'Content-Type'
+                # Add CORS headers - always enable for widget support
+                response_headers['Access-Control-Allow-Origin'] = '*'
+                response_headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+                response_headers['Access-Control-Allow-Headers'] = 'Content-Type, Cache-Control'
+                response_headers['Access-Control-Expose-Headers'] = 'Content-Type'
                 
                 # Send headers
                 for header_name, header_value in response_headers.items():
@@ -318,29 +317,49 @@ async def fulfill_request(method, path, headers, query_params, body, send_respon
         send_chunk (callable): Function to send response body chunks
     '''
     try:
+        # Handle OPTIONS requests for CORS preflight
+        if method == "OPTIONS":
+            await send_response(200, {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Cache-Control',
+                'Access-Control-Max-Age': '86400'
+            })
+            await send_chunk("", end_response=True)
+            return
+
         streaming = True
         generate_mode = "none"
-        
         if ("streaming" in query_params):
             strval = get_param(query_params, "streaming", str, "True")
             streaming = strval not in ["False", "false", "0"]
-        
+
         if ("generate_mode" in query_params):
             generate_mode = get_param(query_params, "generate_mode", str, "none")
-        
+
         if path == "/" or path == "":
             # Serve the home page as /static/index.html
             # First check if the file exists
             try:
                 await send_static_file("/static/index.html", send_response, send_chunk)
             except FileNotFoundError:
-                # If index.html doesn't exist, send a 404 error
+                # If new_test.html doesn't exist, send a 404 error
                 await send_response(404, {'Content-Type': 'text/plain'})
                 await send_chunk("Home page not found".encode('utf-8'), end_response=True)
             return
-        elif (path.find("html/") != -1) or path.find("static/") != -1 or (path.find("png") != -1) or path.endswith('.js') or path.endswith('.css') or path.endswith('.ico'):
+        elif (path.find("html/") != -1) or path.find("static/") != -1 or (path.find("png") != -1):
             await send_static_file(path, send_response, send_chunk)
             return
+        
+        # Data loading endpoints for Railway deployment
+        elif path.startswith("/admin/load-data") or path.startswith("/api/load-rss"):
+            from webserver.data_loader import handle_data_load_request
+            result = await handle_data_load_request(path, query_params)
+            if result:
+                await send_response(result['status'], result['headers'])
+                await send_chunk(result['body'], end_response=True)
+                return
+        
         elif (path.find("who") != -1):
             retval =  await WhoHandler(query_params, None).runQuery()
             await send_response(200, {'Content-Type': 'application/json'})
@@ -428,6 +447,20 @@ def get_port():
         return CONFIG.port
 
 if __name__ == "__main__":
+    import argparse
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description="NLWeb Server")
+    parser.add_argument('--mode', choices=['development', 'production', 'testing'], 
+                       help='Override the application mode from config')
+    parser.add_argument('command', nargs='?', help='Optional command (e.g., https)')
+    args = parser.parse_args()
+    
+    # Override mode if specified
+    if args.mode:
+        CONFIG.set_mode(args.mode)
+        print(f"Mode overridden to: {args.mode}")
+    
     try:
         port = get_port()
         
@@ -450,7 +483,7 @@ if __name__ == "__main__":
         if use_https:
             print("Starting HTTPS server")
             # If using command line, use default cert files
-            if len(sys.argv) > 1 and sys.argv[1] == "https":
+            if args.command == "https":
                 ssl_cert_file = 'fullchain.pem'
                 ssl_key_file = 'privkey.pem'
             else:
