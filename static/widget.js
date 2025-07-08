@@ -9,8 +9,8 @@
     const DEFAULT_CONFIG = {
         apiBaseUrl: 'https://nlweb-wp-production-98b3.up.railway.app/',
         widgetId: 'nlweb-chat-widget',
-        title: 'NLWeb Assistant',
-        welcomeMessage: '👋 Hello! How can I help you today?'
+        title: 'Chat hỗ trợ',
+        welcomeMessage: '👋 Tôi có thể giúp gì cho bạn?'
     };
     
     // Merge with global config if provided
